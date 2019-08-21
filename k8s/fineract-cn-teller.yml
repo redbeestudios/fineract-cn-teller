@@ -1,0 +1,58 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fineract-cn-teller
+spec:
+  selector:
+    app: fineract-cn-teller
+  ports:
+    - name: http
+      protocol: TCP
+      port: 2028
+      targetPort: httpport
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fineract-cn-teller
+  labels:
+    app: fineract-cn-teller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fineract-cn-teller
+  template:
+    metadata:
+      labels:
+        app: fineract-cn-teller
+    spec:
+      containers:
+        - name: fineract-cn-teller
+          image: registry.dev.redbee.io/fineract-cn-teller:latest
+          imagePullPolicy: Always
+          env:
+            - name: "server.port"
+              value: "2028"
+            - name: "server.max-http-header-size"
+              value: "16384"
+            - name: "spring.cloud.config.uri"
+              value: "http://fineract-cn-cloud-config-server:8888"
+            - name: "spring.cloud.config.profile"
+              value: "default"
+          ports:
+            - name: httpport
+              containerPort: 2028
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 0.1
+            limits:
+              memory: 2Gi
+              cpu: 1
+      imagePullSecrets:
+        - name: docker.redbee
+
+---

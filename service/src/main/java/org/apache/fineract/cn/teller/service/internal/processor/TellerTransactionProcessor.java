@@ -47,6 +47,9 @@ public class TellerTransactionProcessor {
   }
 
   public void process(final String tellerCode, final TellerTransaction tellerTransaction, final Boolean chargesIncluded) {
+
+    logger.info("Transaction process " + tellerTransaction.getIdentifier());
+
     switch (tellerTransaction.getTransactionType()) {
       case ServiceConstants.TX_OPEN_ACCOUNT:
         this.depositTransactionHandler.processDepositAccountOpening(tellerCode, tellerTransaction, chargesIncluded);
@@ -58,6 +61,7 @@ public class TellerTransactionProcessor {
         this.depositTransactionHandler.processTransfer(tellerCode, tellerTransaction, chargesIncluded);
         break;
       case ServiceConstants.TX_CASH_DEPOSIT:
+        logger.info("Tx cash deposit ", tellerCode);
         this.depositTransactionHandler.processCashDeposit(tellerCode, tellerTransaction, chargesIncluded);
         break;
       case ServiceConstants.TX_CASH_WITHDRAWAL:
