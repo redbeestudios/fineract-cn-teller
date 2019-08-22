@@ -44,6 +44,10 @@ task publishToMavenLocal {
     dependsOn publishComponentTestToMavenLocal
 }
 
+task publish {
+  dependsOn gradle.includedBuild('api').task(':publish')
+}
+
 task artifactoryPublish {
     group 'all'
     dependsOn publishToMavenLocal
