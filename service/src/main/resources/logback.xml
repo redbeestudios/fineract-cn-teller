@@ -19,17 +19,15 @@
 
 -->
 <configuration>
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/teller.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/archive/teller.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>7</maxHistory>
-            <totalSizeCap>2GB</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+       <destination>w-logstash:6000</destination>
+       <keepAliveDuration>5 minutes</keepAliveDuration>
+       <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+          <includeMdc>true</includeMdc>
+          <customFields>{"appname": "f-teller", "environment": "default"}</customFields>
+       </encoder>
     </appender>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -38,21 +36,27 @@
 
     <logger name="com" level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGSTASH"/>
     </logger>
 
     <logger name="org" level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGSTASH"/>
+    </logger>
+
+    <logger name="org.apache.fineract.cn" level="DEBUG">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGSTASH"/>
     </logger>
 
     <logger name="io" level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGSTASH"/>
     </logger>
 
     <logger name="net" level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGSTASH"/>
     </logger>
 
-    <root level="DEBUG">
-        <appender-ref ref="FILE"/>
-    </root>
 </configuration>

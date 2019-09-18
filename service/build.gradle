@@ -65,7 +65,9 @@ dependencies {
             [group: 'org.apache.fineract.cn', name: 'mariadb', version: versions.frameworkmariadb],
             [group: 'org.apache.fineract.cn', name: 'command', version: versions.frameworkcommand],
             [group: 'org.apache.fineract.cn', name: 'crypto', version: versions.frameworkcrypto],
-            [group: 'org.hibernate', name: 'hibernate-validator', version: versions.validator]
+            [group: 'org.hibernate', name: 'hibernate-validator', version: versions.validator],
+            [group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '4.11'],
+            [group: 'ch.qos.logback', name: 'logback-core', version: '1.1.8']
     )
 }
 
