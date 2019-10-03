@@ -100,6 +100,10 @@ publishing {
     }
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 def dockerImgName = 'fineract-cn-teller'
 
 ////START Build docker image
