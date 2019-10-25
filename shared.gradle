@@ -86,6 +86,7 @@ jar {
 license {
     header rootProject.file('../HEADER')
     strictCheck true
+    exclude 'banner.txt'
     mapping {
         java = 'SLASHSTAR_STYLE'
         xml = 'XML_STYLE'
