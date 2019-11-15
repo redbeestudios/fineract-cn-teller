@@ -18,6 +18,8 @@
  */
 package org.apache.fineract.cn.teller.service.internal.command.handler;
 
+import org.apache.fineract.cn.command.annotation.NotificationFlag;
+import org.apache.fineract.cn.command.kafka.KafkaTopicConstants;
 import org.apache.fineract.cn.teller.ServiceConstants;
 import org.apache.fineract.cn.teller.api.v1.EventConstants;
 import org.apache.fineract.cn.teller.api.v1.domain.Cheque;
@@ -110,7 +112,12 @@ public class TellerTransactionAggregate {
 
   @Transactional
   @CommandHandler
-  @EventEmitter(selectorName = EventConstants.SELECTOR_NAME, selectorValue = EventConstants.CONFIRM_TRANSACTION)
+  @EventEmitter(
+      selectorName = EventConstants.SELECTOR_NAME,
+      selectorValue = EventConstants.CONFIRM_TRANSACTION,
+      selectorKafkaEvent = NotificationFlag.NOTIFY,
+      selectorKafkaTopic = KafkaTopicConstants.TOPIC_TELLER,
+      selectorKafkaTopicError = KafkaTopicConstants.TOPIC_ERROR_TELLER)
   public String process(final ConfirmTellerTransactionCommand confirmTellerTransactionCommand) {
     final Optional<TellerTransactionEntity> optionalTellerTransaction =
         this.tellerTransactionRepository.findByIdentifier(confirmTellerTransactionCommand.tellerTransactionIdentifier());
