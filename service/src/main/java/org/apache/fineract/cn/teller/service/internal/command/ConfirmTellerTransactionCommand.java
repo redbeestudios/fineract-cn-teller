@@ -18,11 +18,16 @@
  */
 package org.apache.fineract.cn.teller.service.internal.command;
 
-public class ConfirmTellerTransactionCommand {
-  private final String tellerTransactionIdentifier;
-  private final boolean chargesIncluded;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-  public ConfirmTellerTransactionCommand(final String tellerTransactionIdentifier, final String charges) {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+public class ConfirmTellerTransactionCommand {
+
+  private String tellerTransactionIdentifier;
+  private boolean chargesIncluded;
+
+  public ConfirmTellerTransactionCommand(final String tellerTransactionIdentifier,
+      final String charges) {
     super();
     this.tellerTransactionIdentifier = tellerTransactionIdentifier;
     this.chargesIncluded = charges.equalsIgnoreCase("included");
@@ -35,4 +40,13 @@ public class ConfirmTellerTransactionCommand {
   public boolean chargesIncluded() {
     return this.chargesIncluded;
   }
+
+  public String getTellerTransactionIdentifier() {
+    return tellerTransactionIdentifier;
+  }
+
+  public boolean isChargesIncluded() {
+    return chargesIncluded;
+  }
+
 }
