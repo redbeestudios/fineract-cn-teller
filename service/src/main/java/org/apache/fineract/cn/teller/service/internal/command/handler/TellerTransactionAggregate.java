@@ -74,7 +74,12 @@ public class TellerTransactionAggregate {
 
   @Transactional
   @CommandHandler
-  @EventEmitter(selectorName = EventConstants.SELECTOR_NAME, selectorValue = EventConstants.INIT_TRANSACTION)
+  @EventEmitter(
+      selectorName = EventConstants.SELECTOR_NAME,
+      selectorValue = EventConstants.INIT_TRANSACTION,
+      selectorKafkaEvent = NotificationFlag.NOTIFY,
+      selectorKafkaTopic = KafkaTopicConstants.TOPIC_TELLER,
+      selectorKafkaTopicError = KafkaTopicConstants.TOPIC_ERROR_TELLER)
   public TellerTransactionCosts process(final InitializeTellerTransactionCommand initializeTellerTransactionCommand) {
     final String tellerCode = initializeTellerTransactionCommand.tellerCode();
     final TellerTransaction tellerTransaction = initializeTellerTransactionCommand.tellerTransaction();
