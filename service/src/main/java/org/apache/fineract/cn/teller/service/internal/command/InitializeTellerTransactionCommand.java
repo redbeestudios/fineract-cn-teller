@@ -21,14 +21,16 @@ package org.apache.fineract.cn.teller.service.internal.command;
 import org.apache.fineract.cn.teller.api.v1.domain.TellerTransaction;
 
 public class InitializeTellerTransactionCommand {
-  private final String tellerCode;
-  private final TellerTransaction tellerTransaction;
+  private String tellerCode;
+  private TellerTransaction tellerTransaction;
 
   public InitializeTellerTransactionCommand(final String tellerCode, final TellerTransaction tellerTransaction) {
     super();
     this.tellerCode = tellerCode;
     this.tellerTransaction = tellerTransaction;
   }
+
+  public InitializeTellerTransactionCommand(){}
 
   public String tellerCode() {
     return this.tellerCode;
@@ -37,4 +39,14 @@ public class InitializeTellerTransactionCommand {
   public TellerTransaction tellerTransaction() {
     return this.tellerTransaction;
   }
+
+
+  public String getTellerCode() {
+    return tellerCode;
+  }
+
+  public TellerTransaction getTellerTransaction() {
+    return tellerTransaction;
+  }
+
 }
