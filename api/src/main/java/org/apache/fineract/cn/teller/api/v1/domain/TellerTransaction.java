@@ -39,15 +39,15 @@ public class TellerTransaction {
   private String transactionType;
   @NotNull
   private String transactionDate;
-  @ValidIdentifier
+  @ValidIdentifier(maxLength = 350)
   private String customerIdentifier;
   @ValidIdentifier
   private String productIdentifier;
   @ValidIdentifier(optional = true)
   private String productCaseIdentifier;
-  @ValidIdentifier(maxLength = 34)
+  @ValidIdentifier(maxLength = 350)
   private String customerAccountIdentifier;
-  @ValidIdentifier(maxLength = 34, optional = true)
+  @ValidIdentifier(maxLength = 350, optional = true)
   private String targetAccountIdentifier;
   @ValidIdentifier
   private String clerk;
