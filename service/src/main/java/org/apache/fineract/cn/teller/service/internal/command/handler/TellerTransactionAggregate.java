@@ -60,10 +60,10 @@ public class TellerTransactionAggregate {
 
   @Autowired
   public TellerTransactionAggregate(@Qualifier(ServiceConstants.LOGGER_NAME) final Logger logger,
-                                    final TellerTransactionRepository tellerTransactionRepository,
-                                    final TellerTransactionProcessor tellerTransactionProcessor,
-                                    final TellerRepository tellerRepository,
-                                    final ChequeRepository chequeRepository) {
+      final TellerTransactionRepository tellerTransactionRepository,
+      final TellerTransactionProcessor tellerTransactionProcessor,
+      final TellerRepository tellerRepository,
+      final ChequeRepository chequeRepository) {
     super();
     this.logger = logger;
     this.tellerTransactionRepository = tellerTransactionRepository;
@@ -75,22 +75,28 @@ public class TellerTransactionAggregate {
   @Transactional
   @CommandHandler
   @EventEmitter(
-          selectorName = EventConstants.SELECTOR_NAME,
-          selectorValue = EventConstants.INIT_TRANSACTION,
-          selectorKafkaEvent = NotificationFlag.NOTIFY,
-          selectorKafkaTopic = KafkaTopicConstants.TOPIC_TELLER,
-          selectorKafkaTopicError = KafkaTopicConstants.TOPIC_ERROR_TELLER)
-  public TellerTransactionCosts process(final InitializeTellerTransactionCommand initializeTellerTransactionCommand) {
+      selectorName = EventConstants.SELECTOR_NAME,
+      selectorValue = EventConstants.INIT_TRANSACTION,
+      selectorKafkaEvent = NotificationFlag.NOTIFY,
+      selectorKafkaTopic = KafkaTopicConstants.TOPIC_TELLER,
+      selectorKafkaTopicError = KafkaTopicConstants.TOPIC_ERROR_TELLER)
+  public TellerTransactionCosts process(
+      final InitializeTellerTransactionCommand initializeTellerTransactionCommand) {
     final String tellerCode = initializeTellerTransactionCommand.tellerCode();
-    final TellerTransaction tellerTransaction = initializeTellerTransactionCommand.tellerTransaction();
+    final TellerTransaction tellerTransaction = initializeTellerTransactionCommand
+        .tellerTransaction();
 
-    final Optional<TellerEntity> optionalTeller = this.tellerRepository.findByIdentifier(tellerCode);
+    final Optional<TellerEntity> optionalTeller = this.tellerRepository
+        .findByIdentifier(tellerCode);
     if (optionalTeller.isPresent()) {
-      tellerTransaction.setIdentifier(RandomStringUtils.randomAlphanumeric(32));
+      tellerTransaction.setIdentifier(Optional.ofNullable(tellerTransaction.getIdentifier())
+          .orElseGet(() -> RandomStringUtils.randomAlphanumeric(32)));
       tellerTransaction.setState(TellerTransaction.State.PENDING.name());
-      final TellerTransactionEntity tellerTransactionEntity = TellerTransactionMapper.map(tellerTransaction);
+      final TellerTransactionEntity tellerTransactionEntity = TellerTransactionMapper
+          .map(tellerTransaction);
       tellerTransactionEntity.setTeller(optionalTeller.get());
-      final TellerTransactionEntity savedTellerTransaction = this.tellerTransactionRepository.save(tellerTransactionEntity);
+      final TellerTransactionEntity savedTellerTransaction = this.tellerTransactionRepository
+          .save(tellerTransactionEntity);
 
       if (tellerTransaction.getTransactionType().equals(ServiceConstants.TX_CHEQUE)) {
         final Cheque cheque = tellerTransaction.getCheque();
@@ -102,7 +108,8 @@ public class TellerTransactionAggregate {
         chequeEntity.setDrawee(cheque.getDrawee());
         chequeEntity.setDrawer(cheque.getDrawer());
         chequeEntity.setPayee(cheque.getPayee());
-        chequeEntity.setDateIssued(Date.valueOf(DateConverter.dateFromIsoString(cheque.getDateIssued())));
+        chequeEntity
+            .setDateIssued(Date.valueOf(DateConverter.dateFromIsoString(cheque.getDateIssued())));
         chequeEntity.setAmount(cheque.getAmount());
         chequeEntity.setOpenCheque(cheque.isOpenCheque());
         this.chequeRepository.save(chequeEntity);
@@ -125,17 +132,20 @@ public class TellerTransactionAggregate {
       selectorKafkaTopicError = KafkaTopicConstants.TOPIC_ERROR_TELLER)
   public String process(final ConfirmTellerTransactionCommand confirmTellerTransactionCommand) {
     final Optional<TellerTransactionEntity> optionalTellerTransaction =
-        this.tellerTransactionRepository.findByIdentifier(confirmTellerTransactionCommand.tellerTransactionIdentifier());
+        this.tellerTransactionRepository
+            .findByIdentifier(confirmTellerTransactionCommand.tellerTransactionIdentifier());
 
     if (optionalTellerTransaction.isPresent()) {
       final TellerTransactionEntity tellerTransactionEntity = optionalTellerTransaction.get();
-      final TellerTransaction tellerTransaction = TellerTransactionMapper.map(tellerTransactionEntity);
+      final TellerTransaction tellerTransaction = TellerTransactionMapper
+          .map(tellerTransactionEntity);
 
       if (tellerTransactionEntity.getTransactionType().equals(ServiceConstants.TX_CHEQUE)) {
         final Optional<ChequeEntity> optionalCheque =
             this.chequeRepository.findByTellerTransactionId(tellerTransactionEntity.getId());
 
-        optionalCheque.ifPresent(chequeEntity -> tellerTransaction.setCheque(ChequeMapper.map(chequeEntity)));
+        optionalCheque
+            .ifPresent(chequeEntity -> tellerTransaction.setCheque(ChequeMapper.map(chequeEntity)));
       }
 
       this.tellerTransactionProcessor.process(tellerTransactionEntity.getTeller().getIdentifier(),
@@ -146,7 +156,8 @@ public class TellerTransactionAggregate {
 
       return confirmTellerTransactionCommand.tellerTransactionIdentifier();
     } else {
-      this.logger.warn("Teller transaction {} not found", confirmTellerTransactionCommand.tellerTransactionIdentifier());
+      this.logger.warn("Teller transaction {} not found",
+          confirmTellerTransactionCommand.tellerTransactionIdentifier());
     }
     return null;
   }
@@ -156,7 +167,8 @@ public class TellerTransactionAggregate {
   @EventEmitter(selectorName = EventConstants.SELECTOR_NAME, selectorValue = EventConstants.CANCEL_TRANSACTION)
   public String process(final CancelTellerTransactionCommand cancelTellerTransactionCommand) {
     final Optional<TellerTransactionEntity> optionalTellerTransaction =
-        this.tellerTransactionRepository.findByIdentifier(cancelTellerTransactionCommand.tellerTransactionIdentifier());
+        this.tellerTransactionRepository
+            .findByIdentifier(cancelTellerTransactionCommand.tellerTransactionIdentifier());
 
     if (optionalTellerTransaction.isPresent()) {
       final TellerTransactionEntity tellerTransactionEntity = optionalTellerTransaction.get();
@@ -165,7 +177,8 @@ public class TellerTransactionAggregate {
 
       return cancelTellerTransactionCommand.tellerTransactionIdentifier();
     } else {
-      this.logger.warn("Teller transaction {} not found", cancelTellerTransactionCommand.tellerTransactionIdentifier());
+      this.logger.warn("Teller transaction {} not found",
+          cancelTellerTransactionCommand.tellerTransactionIdentifier());
     }
     return null;
   }
