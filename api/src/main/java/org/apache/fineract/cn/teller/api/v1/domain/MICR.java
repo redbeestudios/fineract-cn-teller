@@ -25,7 +25,7 @@ public class MICR {
   private String chequeNumber;
   @ValidIdentifier(maxLength = 11)
   private String branchSortCode;
-  @ValidIdentifier(maxLength = 34)
+  @ValidIdentifier(maxLength = 350)
   private String accountNumber;
 
   public MICR() {

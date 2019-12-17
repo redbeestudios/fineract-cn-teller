@@ -33,6 +33,8 @@ public class ConfirmTellerTransactionCommand {
     this.chargesIncluded = charges.equalsIgnoreCase("included");
   }
 
+  public ConfirmTellerTransactionCommand(){}
+
   public String tellerTransactionIdentifier() {
     return this.tellerTransactionIdentifier;
   }
