@@ -60,6 +60,6 @@ public class MigrationAggregate {
     this.flywayFactoryBean.create(this.dataSource).migrate();
 
     this.logger.info("Migration finished.");
-    return this.applicationName.getVersionString();
+    return EventConstants.INITIALIZE;//this.applicationName.getVersionString();
   }
 }
