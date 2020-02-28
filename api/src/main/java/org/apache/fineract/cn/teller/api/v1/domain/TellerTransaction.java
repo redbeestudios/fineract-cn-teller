@@ -59,6 +59,11 @@ public class TellerTransaction {
   @Valid
   private Cheque cheque;
 
+  /**
+   * identifica cuando viene desde w-* o UI
+   */
+  private Boolean initialized;
+
   public TellerTransaction() {
     super();
   }
@@ -157,5 +162,13 @@ public class TellerTransaction {
 
   public void setCheque(final Cheque cheque) {
     this.cheque = cheque;
+  }
+
+  public Boolean getInitialized() {
+    return initialized;
+  }
+
+  public void setInitialized(Boolean initialized) {
+    this.initialized = initialized;
   }
 }
